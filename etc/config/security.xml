@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<security>
+    <host>carfaxsftp.infotraxx.com</host>
+    <port>443</port>
+    <username>shop200007</username>
+    <password>0eMsCCcxWY7lv</password>
+    <variable name="#ShopID#">0</variable>
+</security>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en" xml:lang="en">
+    <head>
+        <title>Build Instructions</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="author" content="Ed Jenkins"/>
+        <style type="text/css">
+            body
+            {
+                color: #000000;
+                background-color: #F0F0FF;
+                font-family: "Verdana";
+                font-size: 10pt;
+                font-weight: normal;
+            }
+            div.section
+            {
+                background-color: #D0D0FF;
+                border-top: 1px solid #000000;
+                border-bottom: 1px solid #000000;
+                border-left: 1px solid #000000;
+                border-right: 1px solid #000000;
+                margin-top: 0px;
+                margin-bottom: 24px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 8px;
+                padding-bottom: 0px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            div.title
+            {
+                color: #EFEFFF;
+                background-color: #A0A0FF;
+                border-top: 1px solid #000000;
+                border-bottom: 1px solid #000000;
+                border-left: 1px solid #000000;
+                border-right: 1px solid #000000;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+                text-align: center;
+            }
+            div.content
+            {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+            h1
+            {
+                font-family: "Verdana";
+                font-size: 14pt;
+                font-weight: normal;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            p.content
+            {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            li
+            {
+                font-family: "Verdana";
+                font-size: 10pt;
+                font-weight: normal;
+            }
+            ul li
+            {
+                list-style: square;
+            }
+            .nowrap
+            {
+                font-family:  "Lucida Console";
+                font-size: 10pt;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        @media print
+        {
+            body
+            {
+                background-color: #FFFFFF;
+            }
+        }
+        </style>
+    </head>
+    <body>
+        <div class="section">
+            <div class="title">
+                <h1>Document Purpose</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    This document describes how to build the project.
+                </p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Intended Audience</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    This document is intended to be read by anyone needing
+                    to modify the project’s source code.
+                </p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Prerequisites for build</h1>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>Install exe4j from sbin/exe4j_windows_4_0_3.exe.</li>
+                    <li>Install Advanced Installer from sbin/advinst.msi.</li>
+                    <li>Get a runtime license for JNIWrapper and copy it to etc/keys/jniwrap.lic.</li>
+                    <li>Get a license for yDoc and copy it to etc/keys/ydoc.license.txt.</li>
+                    <li>Get a license for exe4j.  Start the program and click the Change License button to apply it.</li>
+                    <li>Get a license for Advanced Installer.  Click on Help/Register to apply it.</li>
+                    <li>See etc/api/overview.html for more information.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>How To Build The Project</h1>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>Open a command prompt window.</li>
+                    <li>Change to the project's base directory.</li>
+                    <li>Type 'build clean' and hit Enter.</li>
+                    <li>Type 'build all' and hit Enter.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Notes</h1>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>Always use build.cmd to perform builds.</li>
+                    <li>Use the "build -?" command to get a list of available Ant targets.</li>
+                    <li>API docs contain a listing of all third-party libraries and components used to build and run the application, including licensing information.</li>
+                    <li>Please update etc/api/overview.html when libraries or tools are added or updated.</li>
+                    <li>All dependencies are free and open-source except for JNIWrapper, yDoc, exe4j, Advanced Installer, which are commercial.</li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

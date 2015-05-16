@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odbc>
+    <resource dsn="example" username="example" password="example" filename="example" delimiter="," description="example">select first from name where last = '#name#';</resource>
+</odbc>

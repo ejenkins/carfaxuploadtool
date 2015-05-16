@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fonts SYSTEM "fonts.dtd">
+<fonts>
+    <font id="TITLES" name="Lucida Sans Unicode" style="BOLD" size="32" />
+    <font id="INSTRUCTIONS" name="Lucida Sans Unicode" style="PLAIN" size="5" />
+    <font id="LABELS" name="Lucida Sans Unicode" style="BOLD" size="14" />
+    <font id="FIELDS" name="Lucida Console" style="BOLD" size="14" />
+    <font id="PASSWORDS" name="Lucida Sans Unicode" style="PLAIN" size="14" />
+    <font id="BUTTONS" name="Lucida Sans Unicode" style="BOLD" size="14" />
+    <font id="NOTES" name="Lucida Console" style="BOLD" size="12" />
+    <font id="CORE" name="Lucida Console" style="PLAIN" size="5" />
+    <font id="EULA" name="Lucida Console" style="PLAIN" size="4" />
+</fonts>

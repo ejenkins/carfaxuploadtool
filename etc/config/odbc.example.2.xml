@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odbc>
+    <resource dsn="ANA_Profiles" username="" password="" filename="MyAutoShop_All_Carfax.csv" delimiter="|" description="example 1">
+        SELECT tblVehicles.VIN AS VIN, tblPOSDetail.RefDate AS [RO DATE], tblPOSDetail.LineNo AS [RO Line],
+        tblPOSHeader.Mileage AS ODOMETER, tblPOSHeader.Reference AS [RO NUMBER], tblCustomers.State AS
+        [PLATE  STATE / PROVINCE], tblPOSHeader.LicenseNo AS [PLATE NUMBER], 15834 AS [SERVICE FACILITY ID],
+        "MyRepairShop" AS SMS, tblPOSHeader.AAIAID AS [Vehicle AAIA Number], "" AS [VEHICLE MAKE], "" AS
+        [VEHICLE MODEL], "" AS [VEHICLE YEAR], "" AS [SERVICE FACILITY TELEPHONE NUMBER], "" AS [SERVICE
+        FACILITY ZIP], tblPOSDetail.Description AS [SERVICED PERFORMED], "" AS [SERVICE OP CODE], "" AS
+        [SERVICE OP CODE DESC], tblPOSDetail.LaborPrice, tblPOSDetail.PartPrice, "" AS ENGINE, "" AS
+        TRANSMISSION, "" AS [SUB MODEL], "" AS [VEHICLE TRIM], "" AS [CARFAX INTERNAL SERVICE FACILITY ID], "0" AS
+        [SUPPRESSED FLAG], "0" AS [UPDATE FLAG] FROM ((tblPOSHeader INNER JOIN tblPOSDetail ON
+        tblPOSHeader.Reference = tblPOSDetail.Reference) INNER JOIN tblCustomers ON tblPOSHeader.CustomerID =
+        tblCustomers.ID) INNER JOIN tblVehicles ON tblPOSHeader.VehicleID = tblVehicles.VehicleID;
+    </resource>
+    <resource dsn="ANA_Profiles" username="" password="" filename="MyAutoShop_Vehicle.csv" delimiter="," description="example 2">
+        SELECT
+        tblVehicles.VehicleID, tblVehicles.CustomerID, tblVehicles.Description, tblVehicles.Carcode,
+        tblVehicles.Color, tblVehicles.Mileage, tblVehicles.InspectMo, tblVehicles.VIN, tblVehicles.LicenseNo,
+        tblVehicles.MRS_VehicleID, tblVehicles.AAIAID, tblVehicles.State FROM tblVehicles;
+    </resource>
+    <resource dsn="ANA_Profiles" username="" password="su3845" filename="MyAutoShop_RO_Lines.csv" delimiter="," description="example 3">
+        SELECT tblPOSDetail.Reference, tblPOSDetail.LineNo, tblPOSDetail.RefDate, tblPOSDetail.Type,
+        tblPOSDetail.SalesPerson, tblPOSDetail.Technician, tblPOSDetail.ItemType, tblPOSDetail.MfrCode,
+        tblPOSDetail.ItemNo, tblPOSDetail.Description, tblPOSDetail.JobPrice, tblPOSDetail.PartPrice,
+        tblPOSDetail.LaborPrice, tblPOSDetail.Comment FROM tblPOSDetail;
+    </resource>
+    <resource dsn="ANA_Profiles" username="" password="" filename="MyAutoShop_ROs.csv" delimiter="," description="example 4">
+        SELECT
+        tblPOSHeader.Reference, tblPOSHeader.VehicleID, tblPOSHeader.AAIAID, tblPOSHeader.Type,
+        tblPOSHeader.LicenseNo, tblPOSHeader.VehState, tblPOSHeader.VIN, tblPOSHeader.Mileage, tblPOSHeader.Comment,
+        tblPOSHeader.VehState, tblPOSHeader.SoldBy, tblPOSHeader.VehicleDesc, tblPOSHeader.Total FROM
+        tblPOSHeader;
+    </resource>
+</odbc>

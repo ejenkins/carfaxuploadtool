@@ -1,0 +1,27 @@
+http://carfax.infotraxx.com/
+ABC123
+
+DRAbe@$5
+
+https://db.infotraxx.com/
+un=shop200861
+pw=aq21uzv188
+un=ejenkins
+pw=7NQgaV4j12345
+pw=QfMqCccLE
+
+<?xml version="1.0" encoding="UTF-8"?>
+<security>
+    <host>carfaxsftp.infotraxx.com</host>
+    <port>443</port>
+    <username>shop200861</username>
+    <password>aq21uzv1888</password>
+    <variable name="#DateStamp#">2009.06.10.21.59.24</variable>
+    <variable name="#Last_RO_ID#"/>
+    <variable name="#Next_Record#"/>
+    <variable name="#bname#">ABC123</variable>
+    <variable name="#bphone#">6787556550</variable>
+    <variable name="#bzip#">30328</variable>
+    <variable name="#shopid#">19101</variable>
+    <variable name="#shoplogin#">shop200861</variable>
+</security>

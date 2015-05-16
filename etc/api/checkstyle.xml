@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<!--
+    Adapted from the following specs:
+    - the Java Language Specification at http://java.sun.com/docs/books/jls/second_edition/html/index.html
+    - the Sun Code Conventions at http://java.sun.com/docs/codeconv/
+    - the Javadoc guidelines at http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+    - the JDK Api documentation at http://java.sun.com/j2se/docs/api/index.html
+-->
+<module name="Checker">
+    <module name="PackageHtml" />
+    <module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf" />
+    </module>
+    <module name="Translation" />
+    <module name="TreeWalker">
+        <module name="JavadocType">
+            <property name="authorFormat" value="\S" />
+        </module>
+        <module name="JavadocMethod" />
+        <module name="JavadocVariable" />
+        <module name="JavadocStyle">
+            <property name="checkEmptyJavadoc" value="true" />
+        </module>
+        <module name="AvoidStarImport" />
+        <module name="IllegalImport" />
+        <module name="RedundantImport" />
+        <module name="UnusedImports" />
+        <module name="ImportOrder">
+            <property name="groups" value="ch,com,gov,info,java,javax,net,org,tv,ws" />
+            <property name="separated" value="true" />
+        </module>
+        <module name="AnonInnerLength">
+            <property name="max" value="0" />
+        </module>
+        <module name="EmptyForInitializerPad" />
+        <module name="EmptyForIteratorPad" />
+        <module name="MethodParamPad">
+            <property name="option" value="nospace" />
+        </module>
+        <module name="OperatorWrap" />
+        <module name="TypecastParenPad" />
+        <module name="TabCharacter" />
+        <module name="ModifierOrder" />
+        <module name="LeftCurly">
+            <property name="option" value="nl" />
+        </module>
+        <module name="NeedBraces" />
+        <module name="RightCurly">
+            <property name="option" value="alone" />
+        </module>
+        <module name="AvoidNestedBlocks">
+            <property name="allowInSwitchCase" value="true" />
+        </module>
+        <module name="ArrayTrailingComma" />
+        <module name="CovariantEquals" />
+        <module name="DoubleCheckedLocking" />
+        <module name="EqualsHashCode" />
+        <module name="IllegalInstantiation" />
+        <module name="InnerAssignment" />
+        <module name="MissingSwitchDefault" />
+        <module name="ModifiedControlVariable" />
+        <module name="PackageDeclaration" />
+        <module name="JUnitTestCase" />
+        <module name="ParameterAssignment" />
+        <module name="DefaultComesLast" />
+        <module name="MissingCtor" />
+        <module name="FallThrough" />
+        <module name="MultipleVariableDeclarations" />
+        <module name="FinalClass" />
+        <module name="MutableException" />
+        <module name="TodoComment" />
+        <module name="UpperEll" />
+        <module name="ArrayTypeStyle" />
+    </module>
+</module>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en" xml:lang="en">
+    <head>
+        <title>Readme</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="author" content="Ed Jenkins"/>
+        <style type="text/css">
+            body
+            {
+                color: #000000;
+                background-color: #F0F0FF;
+                font-family: "Verdana";
+                font-size: 10pt;
+                font-weight: normal;
+            }
+            div.section
+            {
+                background-color: #D0D0FF;
+                border-top: 1px solid #000000;
+                border-bottom: 1px solid #000000;
+                border-left: 1px solid #000000;
+                border-right: 1px solid #000000;
+                margin-top: 0px;
+                margin-bottom: 24px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 8px;
+                padding-bottom: 0px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            div.title
+            {
+                color: #EFEFFF;
+                background-color: #A0A0FF;
+                border-top: 1px solid #000000;
+                border-bottom: 1px solid #000000;
+                border-left: 1px solid #000000;
+                border-right: 1px solid #000000;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+                text-align: center;
+            }
+            div.content
+            {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+            h1
+            {
+                font-family: "Verdana";
+                font-size: 14pt;
+                font-weight: normal;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            p.content
+            {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            li
+            {
+                font-family: "Verdana";
+                font-size: 10pt;
+                font-weight: normal;
+            }
+            td
+            {
+                vertical-align: top;
+            }
+            th
+            {
+                text-align: left;
+            }
+            ul li
+            {
+                list-style: square;
+            }
+            .nowrap
+            {
+                font-family:  "Lucida Console";
+                font-size: 10pt;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        @media print
+        {
+            body
+            {
+                background-color: #FFFFFF;
+            }
+        }
+        </style>
+    </head>
+    <body>
+        <div class="section">
+            <div class="title">
+                <h1>Document Purpose</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    This document describes the files and registry keys that make up this application.
+                </p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Intended Audience</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    This document may be of interest to anyone who installs or uses the application.
+                </p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Program Files</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    All program, data, and log files are in
+                    <span class="nowrap">C:\Program Files\CARFAX Upload Tool</span>.
+                </p>
+                <ul>
+                    <li><span class="nowrap">jdk1.6.0_02</span> - this directory is the Java runtime environment</li>
+                    <li><span class="nowrap">lib</span> - all of the libraries are in this directory</li>
+                    <li><span class="nowrap">licenses</span> - this directory has copies of license agreements for each of the libraries</li>
+                    <li><span class="nowrap">CARFAX.server.log</span> - log file for CARFAX.server.exe, which is in the jdk and is a copy of javaw.exe</li>
+                    <li><span class="nowrap">CARFAX.server.pid</span> - contains the process ID of CARFAX.server.exe while it is running</li>
+                    <li><span class="nowrap">CARFAX.service.exe</span> - the Windows NT service executable that runs the server</li>
+                    <li><span class="nowrap">CARFAX.service.ini</span> - config file for CARFAX.service.exe</li>
+                    <li><span class="nowrap">CARFAX.service.log</span> - log file for CARFAX.service.exe</li>
+                    <li><span class="nowrap">CARFAX.service.pid</span> - contains the process ID of CARFAX.service.exe while it is running</li>
+                    <li><span class="nowrap">CARFAX.setup.exe</span> - the setup program</li>
+                    <li><span class="nowrap">CARFAX.setup.log</span> - log file for the setup program</li>
+                    <li><span class="nowrap">CARFAX.sm.install.exe</span> - installs the service</li>
+                    <li><span class="nowrap">CARFAX.sm.log</span> - log file for the service manager utilities</li>
+                    <li><span class="nowrap">CARFAX.sm.remove.exe</span> - removes the service</li>
+                    <li><span class="nowrap">CARFAX.sm.start.exe</span> - starts the service</li>
+                    <li><span class="nowrap">CARFAX.sm.stop.exe</span> - stops the service</li>
+                    <li><span class="nowrap">CARFAX-server.chm</span> - API documentation for the server</li>
+                    <li><span class="nowrap">CARFAX-setup.chm</span> - API documentation for the setup program</li>
+                    <li><span class="nowrap">CARFAX-sm.chm</span> - API documentation for the service manager utilities</li>
+                    <li><span class="nowrap">readme.html</span> - this file</li>
+                    <li><span class="nowrap">release.notes.html</span> - release notes</li>
+                    <li><span class="nowrap">sysinfo.dtd</span> - schema for sysinfo.xml</li>
+                    <li><span class="nowrap">sysinfo.xml</span> - contains system information that may be by production support</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Configuration Files</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    The application keeps some configuration files in
+                    <span class="nowrap">C:\Documents and Settings\All Users\Application Data\CARFAX Upload Tool</span>.
+                    To make the upgrade process smooth, the uninstaller does not remove these files.
+                </p>
+                <ul>
+                    <li><span class="nowrap">files.xml</span> - contains the list of files to be uploaded</li>
+                    <li><span class="nowrap">odbc.xml</span> - contains the list of ODBC resources to extract data from</li>
+                    <li><span class="nowrap">security.xml</span> - contains authentication configuration information</li>
+                    <li><span class="nowrap">setup.ini</span> - contains information used by setup.exe</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Start Menu</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    setup.exe puts shortcuts on the Start menu in
+                    <span class="nowrap">C:\Documents and Settings\All Users\Start Menu\Programs\CARFAX Upload Tool</span>.
+                </p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Registry Entries</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    setup.exe creates this key to register the server as a Windows NT service.
+                </p>
+                <ul>
+                    <li><span class="nowrap">HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CARFAXUploadTool</span></li>
+                </ul>
+                <p class="content">
+                    setup.exe creates the following registry keys to help with production support and upgrades.
+                </p>
+                <ul>
+                    <li><span class="nowrap">HKEY_LOCAL_MACHINE\SOFTWARE\Infotraxx Systems, LLC\CARFAX Upload Tool</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title">
+                <h1>Scheduled Jobs</h1>
+            </div>
+            <div class="content">
+                <p class="content">
+                    The following tasks are performed once per hour, each one starting one minute apart.  All network activity is conducted over a secure connection with an SFTP server.
+                </p>
+                <table cellspacing="4" cellpadding="4" summary="Scheduled Jobs">
+                    <tr>
+                        <th>Order</th>
+                        <th>Name</th>
+                        <th>Purpose</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>SFTPDownloadUpgradeJob</td>
+                        <td>Downloads upgrade.exe (if available) and executes it so the application can upgrade itself when new features are available.  When an upgrade is available, upgrade.exe will stop the service, add, remove, or modify files as needed, and start the service.  The service thens deletes upgrade.exe the next time this job is executed.  If the file is not available, nothing happens.</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>SFTPDownloadSecurityJob</td>
+                        <td>Downloads security.xml (if available) to a temporary directory and parses it.  If the file is well-formed and in the proper format, data is copied to the security.xml file that the server uses.  Changes take effect immediately.  If the file is not available, nothing happens.</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>SFTPDownloadODBCJob</td>
+                        <td>Downloads odbc.xml (if available) to a temporary directory and parses it.  If the file is well-formed and in the proper format, data is copied to the odbc.xml file that the server uses.  Changes take effect immediately.  If the file is not available, nothing happens.</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>SFTPDownloadFilesJob</td>
+                        <td>Downloads files.xml (if available) to a temporary directory and parses it.  If the file is well-formed and in the proper format, data is copied to the files.xml file that the server uses.  Changes take effect immediately.  If the file is not available, nothing happens.</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>SFTPUploadSysInfoJob</td>
+                        <td>
+                            Gathers some important details about your computer that will be useful if help is needed to resolve an issue.
+                            The types of information reported include (but are not limited to) things such as:
+                            <ul>
+                                <li>number of processors installed and thier speed</li>
+                                <li>amount of memory available</li>
+                                <li>amount of free disk space available</li>
+                                <li>operating system version</li>
+                                <li>a list of available ODBC resources</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>SFTPUploadODBCJob</td>
+                        <td>Extracts data from ODBC databases and uploads it.</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>SFTPUploadFilesJob</td>
+                        <td>Uploads files.</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>SFTPUploadInventoryJob</td>
+                        <td>When requested, this job scans the computer to build a list of files that may be uploaded.  This information (if gathered) is used for the sole purpose of determining which files contain information that may be relevant to CARFAX or its affiliates when the filenames or locations are not known in advance.  This scan can only be performed by special request, so most of the time it will actually do nothing.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

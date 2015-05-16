@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odbc>
+    <resource dsn="Profiles" username="" password="" filename="Profiles.tblComputer.csv" delimiter="," description="example 1">select * from tblComputer;</resource>
+    <resource dsn="Profiles" username="" password="" filename="Profiles.tblPOSInvoice.csv" delimiter="," description="example 2">select * from tblPOSInvoice;</resource>
+    <resource dsn="Profiles" username="" password="" filename="Profiles.tblZipCode.csv" delimiter="," description="example 3">select State, City, ZipCode from tblZipCode order by State, City, ZipCode;</resource>
+    <resource dsn="MMS Series I 32 SU" username="CMDMricStatic" password="su3845" filename="mms.Schedule.csv" delimiter="|" description="example 4">select * from Schedule;</resource>
+</odbc>

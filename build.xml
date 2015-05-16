@@ -1,0 +1,1008 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cut" default="pub" basedir=".">
+    <!-- description -->
+    <description>
+        Builds the project.
+    </description>
+    <!-- turn on the logger -->
+    <record name="build.log"/>
+    <target name="number" description="displays the current build number" depends="">
+        <property file="build.number" prefix="app"/>
+        <echo message="The last build number was ${app.build.number}"/>
+    </target>
+    <target name="clean" description="deletes the current build" depends="">
+        <!-- clean up old files -->
+        <delete dir="${java.io.tmpdir}/par-${user.name}"/>
+        <delete dir="build"/>
+        <delete dir="dist"/>
+        <delete dir="pub"/>
+        <delete dir="tmp"/>
+    </target>
+    <target name="init" description="initializes a new build" depends="">
+        <!-- get date and time -->
+        <tstamp prefix="app.build">
+            <format property="date" pattern="MM/dd/yyyy HH:mm:ss"/>
+        </tstamp>
+        <!-- update build number -->
+        <buildnumber/>
+        <property file="build.number" prefix="app"/>
+        <!-- get environment variables -->
+        <property environment="app.env"/>
+        <!-- read options from config file -->
+        <property file="build.xml.properties" prefix="app"/>
+        <!-- set gui flag -->
+        <condition property="app.gui" value="">
+            <equals arg1="${app.enable.console}" arg2="Y" casesensitive="false" trim="true"/>
+        </condition>
+        <condition property="app.gui" value="-g">
+            <not>
+                <equals arg1="${app.enable.console}" arg2="Y" casesensitive="false" trim="true"/>
+            </not>
+        </condition>
+        <!-- set the classpaths -->
+        <path id="app.cp.lib">
+            <fileset dir="dist/lib">
+                <include name="${app.name.short}.service.jar"/>
+                <include name="commons-codec-1.3.zip"/>
+                <include name="commons-httpclient-3.1.jar"/>
+                <include name="ganymed-ssh2-build211beta4.jar"/>
+                <include name="jniwrap-3.6.1.jar"/>
+                <include name="log4j-1.2.14.jar"/>
+                <include name="quartz-all-1.6.0.jar"/>
+                <include name="resolver.jar"/>
+                <include name="serializer.jar"/>
+                <include name="winpack-3.6.jar"/>
+                <include name="xalan.jar"/>
+                <include name="xercesImpl.jar"/>
+                <include name="xml-apis.jar"/>
+            </fileset>
+        </path>
+        <path id="app.cp.ydoc">
+            <fileset dir="bin/${app.ydoc.name}/lib">
+                <include name="class2svg.jar"/>
+                <include name="styleed.jar"/>
+                <include name="ydoc.jar"/>
+            </fileset>
+            <pathelement path="bin/${app.ydoc.name}/resources"/>
+        </path>
+        <path id="app.cp.checkstyle">
+            <fileset dir="bin/${app.checkstyle.name}">
+                <include name="${app.checkstyle.all}"/>
+                <include name="${app.checkstyle.opt}"/>
+            </fileset>
+        </path>
+        <path id="app.cp.javancss">
+            <fileset dir="bin/javancss28.49/lib">
+                <include name="ccl.jar"/>
+                <include name="javancss.jar"/>
+                <include name="jhbasic.jar"/>
+            </fileset>
+        </path>
+        <path id="app.cp.exe4j">
+            <fileset dir="${app.exe4j.dir}">
+                <include name="ant.jar"/>
+            </fileset>
+        </path>
+        <path id="app.cp.server.jar">
+            <path refid="app.cp.lib"/>
+            <pathelement path="build/server.jar"/>
+        </path>
+        <path id="app.cp.sm.jar">
+            <path refid="app.cp.lib"/>
+            <pathelement path="build/sm.jar"/>
+        </path>
+        <path id="app.cp.setup.jar">
+            <path refid="app.cp.lib"/>
+            <pathelement path="build/setup.jar"/>
+        </path>
+        <path id="app.cp.upgrade.jar">
+            <path refid="app.cp.lib"/>
+            <pathelement path="build/upgrade.jar"/>
+        </path>
+        <!-- define tasks -->
+        <taskdef resource="checkstyletask.properties" classpathref="app.cp.checkstyle"/>
+        <taskdef name="javancss" classname="javancss.JavancssAntTask" classpathref="app.cp.javancss"/>
+        <taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpathref="app.cp.exe4j"/>
+        <!-- display banner -->
+        <echo message="Project Properties"/>
+        <echo message="------------------"/>
+        <echo message="Short Name:      ${app.name.short}"/>
+        <echo message="Medium Name:     ${app.name.medium}"/>
+        <echo message="Long Name:       ${app.name.long}"/>
+        <echo message="Version Number:  ${app.build.version}"/>
+        <echo message="Build Number:    ${app.build.number}"/>
+        <echo message="Package Name:    ${app.package.name}"/>
+        <echo message="Build Date:      ${app.build.date}"/>
+        <echo message="Build Type:      ${app.build.type}"/>
+        <echo message="Built By:        ${user.name}"/>
+        <echo message="Console:         ${app.enable.console}"/>
+        <echo message=""/>
+        <echo message="Build Environment"/>
+        <echo message="-----------------"/>
+        <echo message="OS Name:         ${os.name}"/>
+        <echo message="OS Version:      ${os.version}"/>
+        <echo message="Java VM Name:    ${java.vm.name}"/>
+        <echo message="Java Version:    ${java.runtime.version}"/>
+        <echo message="Ant Version:     ${ant.version}"/>
+        <echo message=""/>
+        <!-- verify prerequisites are installed -->
+        <echo message="Checking prerequisites..."/>
+        <available property="app.hhc.exe.exists" file="${app.hhc.exe}" type="file"/>
+        <available property="app.exe4j.exe.exists" file="${app.exe4j.exe}" type="file"/>
+        <available property="app.AdvancedInstaller.exe.exists" file="${app.AdvancedInstaller.exe}" type="file"/>
+        <fail message="HTML Help Workshop is not installed.  See build.instructions.html" unless="app.hhc.exe.exists" status="1"/>
+        <fail message="exe4j is not installed.  See build.instructions.html" unless="app.exe4j.exe.exists" status="1"/>
+        <fail message="Advanced Installer is not installed.  See build.instructions.html" unless="app.AdvancedInstaller.exe.exists" status="1"/>
+        <echo message="All prerequisites are installed."/>
+        <echo message=""/>
+        <!-- save properties -->
+        <mkdir dir="build/properties"/>
+        <echoproperties destfile="build/properties/build.properties.tmp" format="xml"/>
+        <xslt in="build/properties/build.properties.tmp" style="etc/properties/xml.properties.xsl" out="build/properties/build.properties"/>
+        <xslt in="build/properties/build.properties.tmp" style="etc/properties/xml.xml.xsl" out="build/properties/build.properties.xml"/>
+        <xslt in="build/properties/build.properties.tmp" style="etc/properties/xml.html.xsl" out="build/properties/build.properties.html"/>
+    </target>
+    <target name="lic" description="copies licenses" depends="init">
+        <!-- licenses -->
+        <echo message="Copying licenses..."/>
+        <mkdir dir="dist/licenses"/>
+        <copy todir="dist/licenses" preservelastmodified="true">
+            <fileset dir="etc/license/runtime">
+                <include name="**"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="lib" description="prepares the libraries" depends="init">
+        <!-- prep -->
+        <echo message="Preparing libraries..."/>
+        <mkdir dir="tmp/ext"/>
+        <mkdir dir="tmp/jce"/>
+        <mkdir dir="tmp/lib"/>
+        <!-- ext -->
+        <copy todir="tmp/ext" preservelastmodified="true" overwrite="false">
+            <fileset dir="bin/${app.jdk.name}/jre/lib">
+                <include name="jce.jar"/>
+                <include name="jsse.jar"/>
+            </fileset>
+        </copy>
+        <!-- jce -->
+        <unzip src="lib/jce_policy-6.zip" dest="tmp" overwrite="false">
+            <patternset>
+                <include name="jce/US_export_policy.jar"/>
+                <include name="jce/local_policy.jar"/>
+            </patternset>
+        </unzip>
+        <!-- commons-codec-1.3.zip -->
+        <unzip src="lib/commons-codec-1.3.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="commons-codec-1.3/commons-codec-1.3.jar"/>
+            </patternset>
+        </unzip>
+        <!-- commons-httpclient-3.1.zip -->
+        <unzip src="lib/commons-httpclient-3.1.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="commons-httpclient-3.1/commons-httpclient-3.1.jar"/>
+            </patternset>
+        </unzip>
+        <!-- ganymed-ssh2-build211beta4.zip -->
+        <unzip src="lib/ganymed-ssh2-build211beta4.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="ganymed-ssh2-build211beta4/ganymed-ssh2-build211beta4.jar"/>
+            </patternset>
+        </unzip>
+        <!-- jniwrapper-3.6.1-win32.zip -->
+        <mkdir dir="tmp/lib/jniwrapper-3.6.1-win32"/>
+        <unzip src="lib/jniwrapper-3.6.1-win32.zip" dest="tmp/lib/jniwrapper-3.6.1-win32" overwrite="false">
+            <patternset>
+                <include name="bin/jniwrap.dll"/>
+                <include name="lib/jniwrap-3.6.1.jar"/>
+                <include name="WinPack/lib/winpack-3.6.jar"/>
+            </patternset>
+        </unzip>
+        <!-- logging-log4j-1.2.14.zip -->
+        <unzip src="lib/logging-log4j-1.2.14.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="logging-log4j-1.2.14/dist/lib/log4j-1.2.14.jar"/>
+            </patternset>
+        </unzip>
+        <!-- quartz-1.6.0.zip -->
+        <mkdir dir="tmp/lib/quartz-1.6.0"/>
+        <unzip src="lib/quartz-1.6.0.zip" dest="tmp/lib/quartz-1.6.0" overwrite="false">
+            <patternset>
+                <include name="quartz-all-1.6.0.jar"/>
+                <include name="lib/build/jta.jar"/>
+                <include name="lib/core/commons-collections-3.1.jar"/>
+                <include name="lib/core/commons-logging.jar"/>
+            </patternset>
+        </unzip>
+        <!-- wrapper-windows-x86-32-3.2.3.zip -->
+        <unzip src="lib/wrapper-windows-x86-32-3.2.3.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="wrapper-windows-x86-32-3.2.3/bin/wrapper.exe"/>
+                <include name="wrapper-windows-x86-32-3.2.3/lib/wrapper.dll"/>
+                <include name="wrapper-windows-x86-32-3.2.3/lib/wrapper.jar"/>
+            </patternset>
+        </unzip>
+        <move file="tmp/lib/wrapper-windows-x86-32-3.2.3/lib/wrapper.jar" tofile="tmp/lib/wrapper-windows-x86-32-3.2.3/lib/${app.name.short}.service.jar" preservelastmodified="true"/>
+        <!-- xalan-j_2_7_0-bin.zip -->
+        <unzip src="lib/xalan-j_2_7_0-bin.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="xalan-j_2_7_0/serializer.jar"/>
+                <include name="xalan-j_2_7_0/xalan.jar"/>
+            </patternset>
+        </unzip>
+        <!-- Xerces-J-bin.2.8.1.zip -->
+        <unzip src="lib/Xerces-J-bin.2.8.1.zip" dest="tmp/lib" overwrite="false">
+            <patternset>
+                <include name="xerces-2_8_1/resolver.jar"/>
+                <include name="xerces-2_8_1/xercesImpl.jar"/>
+                <include name="xerces-2_8_1/xml-apis.jar"/>
+            </patternset>
+        </unzip>
+        <!-- lib -->
+        <mkdir dir="dist/lib"/>
+        <copy file="tmp/lib/jniwrapper-3.6.1-win32/bin/jniwrap.dll" tofile="dist/lib/jniwrap.dll" preservelastmodified="true"/>
+        <copy file="etc/keys/jniwrap.lic" tofile="dist/lib/jniwrap.lic" preservelastmodified="true"/>
+        <copy file="tmp/lib/wrapper-windows-x86-32-3.2.3/lib/wrapper.dll" tofile="dist/lib/${app.name.short}.service-windows-x86-32.dll" preservelastmodified="true"/>
+        <copy todir="dist/lib" preservelastmodified="true" flatten="true" overwrite="false">
+            <fileset dir="tmp/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="server.jar" description="builds server.jar" depends="lib">
+        <!-- compile -->
+        <echo message="Compiling..."/>
+        <delete dir="build/server.jar"/>
+        <mkdir dir="build/server.jar"/>
+        <javac srcdir="src/server.jar" destdir="build/server.jar" classpathref="app.cp.lib" debug="true" deprecation="true" includeAntRuntime="false" fork="true" memoryInitialSize="${app.mem.min}m" memoryMaximumSize="${app.mem.max}m">
+            <compilerarg value="-Xlint:deprecation,unchecked,fallthrough,path,finally"/>
+            <compilerarg value="-Xmaxerrs"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+            <compilerarg value="-Xmaxwarns"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+        </javac>
+        <!-- link -->
+        <echo message="Linking..."/>
+        <copy todir="build/server.jar" preservelastmodified="true">
+            <fileset dir="src/server.jar">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+        <copy file="build/properties/build.properties" todir="build/server.jar/res" preservelastmodified="true"/>
+        <copy file="build/properties/build.properties.xml" todir="build/server.jar/res" preservelastmodified="true"/>
+        <mkdir dir="dist/lib"/>
+        <jar destfile="dist/lib/${app.name.short}.server.jar" compress="true" duplicate="fail" index="true">
+            <manifest>
+                <attribute name="Build-Number" value="${app.build.number}"/>
+                <attribute name="Build-Date" value="${app.build.date}"/>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="${app.server.jar.main}"/>
+                <attribute name="Specification-Title" value="${app.name.long}"/>
+                <attribute name="Specification-Vendor" value="${app.company}"/>
+                <attribute name="Specification-Version" value="${app.build.version}"/>
+                <attribute name="Implementation-Title" value="${app.name.long}"/>
+                <attribute name="Implementation-Vendor" value="${app.company}"/>
+                <attribute name="Implementation-Version" value="${app.build.version}.${app.build.number}"/>
+            </manifest>
+            <fileset dir="build/server.jar">
+                <include name="**"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="sm.jar" description="builds sm.jar" depends="lib">
+        <!-- compile -->
+        <echo message="Compiling..."/>
+        <delete dir="build/sm.jar"/>
+        <mkdir dir="build/sm.jar"/>
+        <javac srcdir="src/sm.jar" destdir="build/sm.jar" classpathref="app.cp.lib" debug="true" deprecation="true" includeAntRuntime="false" fork="true" memoryInitialSize="${app.mem.min}m" memoryMaximumSize="${app.mem.max}m">
+            <compilerarg value="-Xlint:deprecation,unchecked,fallthrough,path,finally"/>
+            <compilerarg value="-Xmaxerrs"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+            <compilerarg value="-Xmaxwarns"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+        </javac>
+        <!-- link -->
+        <echo message="Linking..."/>
+        <copy todir="build/sm.jar" preservelastmodified="true">
+            <fileset dir="src/sm.jar">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+        <copy file="build/properties/build.properties" todir="build/sm.jar/res" preservelastmodified="true"/>
+        <copy file="build/properties/build.properties.xml" todir="build/sm.jar/res" preservelastmodified="true"/>
+        <mkdir dir="dist/lib"/>
+        <jar destfile="dist/lib/${app.name.short}.sm.jar" compress="true" duplicate="fail" index="true">
+            <manifest>
+                <attribute name="Build-Number" value="${app.build.number}"/>
+                <attribute name="Build-Date" value="${app.build.date}"/>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Specification-Title" value="${app.name.long}"/>
+                <attribute name="Specification-Vendor" value="${app.company}"/>
+                <attribute name="Specification-Version" value="${app.build.version}"/>
+                <attribute name="Implementation-Title" value="${app.name.long}"/>
+                <attribute name="Implementation-Vendor" value="${app.company}"/>
+                <attribute name="Implementation-Version" value="${app.build.version}.${app.build.number}"/>
+            </manifest>
+            <fileset dir="build/sm.jar">
+                <include name="**"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="setup.jar" description="builds setup.jar" depends="lib">
+        <!-- compile -->
+        <echo message="Compiling..."/>
+        <delete dir="build/setup.jar"/>
+        <mkdir dir="build/setup.jar"/>
+        <javac srcdir="src/setup.jar" destdir="build/setup.jar" classpathref="app.cp.lib" debug="true" deprecation="true" includeAntRuntime="false" fork="true" memoryInitialSize="${app.mem.min}m" memoryMaximumSize="${app.mem.max}m">
+            <compilerarg value="-Xlint:deprecation,unchecked,fallthrough,path,finally"/>
+            <compilerarg value="-Xmaxerrs"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+            <compilerarg value="-Xmaxwarns"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+        </javac>
+        <!-- link -->
+        <echo message="Linking..."/>
+        <copy todir="build/setup.jar" preservelastmodified="true">
+            <fileset dir="src/common">
+                <include name="res/**"/>
+            </fileset>
+            <fileset dir="src/setup.jar">
+                <include name="**/*.properties"/>
+            </fileset>
+            <fileset dir="src/setup.jar">
+                <include name="res/**"/>
+            </fileset>
+        </copy>
+        <copy file="build/properties/build.properties" todir="build/setup.jar/res" preservelastmodified="true"/>
+        <copy file="build/properties/build.properties.xml" todir="build/setup.jar/res" preservelastmodified="true"/>
+        <mkdir dir="dist/lib"/>
+        <jar destfile="dist/lib/${app.name.short}.setup.jar" compress="true" duplicate="fail" index="true">
+            <manifest>
+                <attribute name="Build-Number" value="${app.build.number}"/>
+                <attribute name="Build-Date" value="${app.build.date}"/>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="${app.setup.jar.main}"/>
+                <attribute name="Specification-Title" value="${app.name.long}"/>
+                <attribute name="Specification-Vendor" value="${app.company}"/>
+                <attribute name="Specification-Version" value="${app.build.version}"/>
+                <attribute name="Implementation-Title" value="${app.name.long}"/>
+                <attribute name="Implementation-Vendor" value="${app.company}"/>
+                <attribute name="Implementation-Version" value="${app.build.version}.${app.build.number}"/>
+            </manifest>
+            <fileset dir="build/setup.jar">
+                <include name="**"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="upgrade.jar" description="builds upgrade.jar" depends="lib">
+        <!-- compile -->
+        <echo message="Compiling..."/>
+        <delete dir="build/upgrade.jar"/>
+        <mkdir dir="build/upgrade.jar"/>
+        <javac srcdir="src/upgrade.jar" destdir="build/upgrade.jar" classpathref="app.cp.lib" debug="true" deprecation="true" includeAntRuntime="false" fork="true" memoryInitialSize="${app.mem.min}m" memoryMaximumSize="${app.mem.max}m">
+            <compilerarg value="-Xlint:deprecation,unchecked,fallthrough,path,finally"/>
+            <compilerarg value="-Xmaxerrs"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+            <compilerarg value="-Xmaxwarns"/>
+            <compilerarg value="${app.max.compiler.errors}"/>
+        </javac>
+        <!-- link -->
+        <echo message="Linking..."/>
+        <copy todir="build/upgrade.jar" preservelastmodified="true">
+            <fileset dir="src/common">
+                <include name="res/**"/>
+            </fileset>
+            <fileset dir="src/upgrade.jar">
+                <include name="**/*.properties"/>
+            </fileset>
+            <fileset dir="src/upgrade.jar">
+                <include name="res/**"/>
+            </fileset>
+        </copy>
+        <copy file="build/properties/build.properties" todir="build/upgrade.jar/res" preservelastmodified="true"/>
+        <copy file="build/properties/build.properties.xml" todir="build/upgrade.jar/res" preservelastmodified="true"/>
+        <mkdir dir="dist/lib"/>
+        <jar destfile="dist/lib/${app.name.short}.upgrade.jar" compress="true" duplicate="fail" index="true">
+            <manifest>
+                <attribute name="Build-Number" value="${app.build.number}"/>
+                <attribute name="Build-Date" value="${app.build.date}"/>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="${app.upgrade.jar.main}"/>
+                <attribute name="Specification-Title" value="${app.name.long}"/>
+                <attribute name="Specification-Vendor" value="${app.company}"/>
+                <attribute name="Specification-Version" value="${app.build.version}"/>
+                <attribute name="Implementation-Title" value="${app.name.long}"/>
+                <attribute name="Implementation-Vendor" value="${app.company}"/>
+                <attribute name="Implementation-Version" value="${app.build.version}.${app.build.number}"/>
+            </manifest>
+            <fileset dir="build/upgrade.jar">
+                <include name="**"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="server.api" description="generates documentation for the server program" depends="server.jar">
+        <!-- configure yDoc -->
+        <copy todir="bin/${app.ydoc.name}/resources" preservelastmodified="true">
+            <fileset dir="etc/api">
+                <include name="ydoc.properties"/>
+            </fileset>
+        </copy>
+        <!-- generate API documentation -->
+        <echo message="Generating API documentation..."/>
+        <delete dir="build/server.api"/>
+        <mkdir dir="build/server.api"/>
+        <javadoc Header="${app.package.name}-server" access="private" author="true" destdir="build/server.api" doctitle="${app.package.name}-server" failonerror="true" linksource="yes" overview="etc/api/overview.html" packagenames="*" sourcepath="src/server.jar" use="true" version="true" windowtitle="${app.package.name}-server">
+            <arg value="-quiet"/>
+            <arg value="-keywords"/>
+            <arg value="-license"/>
+            <arg value="etc/keys/ydoc.license.txt"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/products/javamail/javadocs/"/>
+            <link href="http://logging.apache.org/log4j/docs/api/"/>
+            <link href="http://teamdev.com/downloads/jniwrapper/javadoc/jniwrapper_v3/"/>
+            <link href="http://teamdev.com/downloads/winpack/javadoc/"/>
+            <link href="http://wrapper.tanukisoftware.org/jdoc/"/>
+            <link href="http://www.ganymed.ethz.ch/ssh2/javadoc/"/>
+            <link href="http://www.opensymphony.com/quartz/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/other/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xerces2/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xni/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xs/"/>
+            <link href="http://xml.apache.org/xalan-j/apidocs/"/>
+            <group title="${app.name.long}" packages="${app.base.package}.*"/>
+            <doclet name="ydoc.doclets.YStandard" pathref="app.cp.ydoc">
+                <param name="-umlautogen" value=""/>
+            </doclet>
+            <classpath refid="app.cp.server.jar"/>
+        </javadoc>
+        <!-- copy additional documentation -->
+        <echo message="Copying additional documentation..."/>
+        <copy todir="build/server.api" preservelastmodified="true">
+            <fileset dir=".">
+                <include name="build.instructions.html"/>
+                <include name="readme.html"/>
+                <include name="release.notes.html"/>
+            </fileset>
+            <fileset dir="src/server.jar">
+                <include name="**/*.html"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+                <include name="**/*.svg"/>
+                <include name="**/*.js"/>
+                <exclude name="**/package.html"/>
+            </fileset>
+        </copy>
+        <!-- copy properties -->
+        <echo message="Copying properties..."/>
+        <copy file="build/properties/build.properties.html" todir="build/server.api" preservelastmodified="true"/>
+        <!-- check style -->
+        <echo message="Analyzing..."/>
+        <checkstyle config="etc/api/checkstyle.xml" failOnViolation="false">
+            <fileset dir="src/server.jar">
+                <include name="**/*.java"/>
+            </fileset>
+            <classpath refid="app.cp.server.jar"/>
+            <formatter type="xml" toFile="build/server.api/build.checkstyle.xml"/>
+        </checkstyle>
+        <copy file="etc/api/checkstyle.png" todir="build/server.api" preservelastmodified="true"/>
+        <xslt in="build/server.api/build.checkstyle.xml" style="etc/api/checkstyle.xsl" out="build/server.api/build.checkstyle.html"/>
+        <!-- JavaNCSS -->
+        <javancss srcdir="src/server.jar" includes="**/*.java" generateReport="true" outputfile="build/server.api/build.javancss.xml" format="xml"/>
+        <xslt in="build/server.api/build.javancss.xml" style="bin/javancss28.49/xslt/javancss2html.xsl" out="build/server.api/build.javancss.html"/>
+        <!-- perform package dependency analysis -->
+        <echo message="Performing package dependency analysis..."/>
+        <jdepend outputfile="build/server.api/build.jdepend.xml" format="xml">
+            <sourcespath>
+                <pathelement location="src/server.jar"/>
+            </sourcespath>
+            <classespath>
+                <pathelement location="build/server.jar"/>
+            </classespath>
+            <exclude name="ch.ethz.ssh2"/>
+            <exclude name="com.jniwrapper"/>
+            <exclude name="com.jniwrapper.win32.registry"/>
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <exclude name="org.apache"/>
+            <exclude name="org.quartz"/>
+            <exclude name="org.quartz.impl"/>
+            <exclude name="org.w3c"/>
+            <exclude name="org.xml.sax"/>
+        </jdepend>
+        <xslt in="build/server.api/build.jdepend.xml" style="bin/${app.ant.name}/etc/jdepend.xsl" out="build/server.api/build.jdepend.html"/>
+        <!-- publish the api docs -->
+<!--
+        <zip compress="true" destfile="dist/${app.package.name}-server.api.zip" duplicate="fail" level="9">
+            <fileset dir="build/server.api">
+                <include name="**"/>
+            </fileset>
+        </zip>
+-->
+        <!-- compile to Windows Help format -->
+        <exec executable="bin/jd2chm.exe" dir="build/server.api" os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="-p"/>
+            <arg value="${app.name.short}-server"/>
+            <arg value="-t"/>
+            <arg value="${app.package.name}-server"/>
+        </exec>
+        <copy file="build/server.api/${app.name.short}-server.chm" todir="dist" preservelastmodified="true"/>
+    </target>
+    <target name="sm.api" description="generates documentation for the service manager" depends="sm.jar">
+        <!-- configure yDoc -->
+        <copy todir="bin/${app.ydoc.name}/resources" preservelastmodified="true">
+            <fileset dir="etc/api">
+                <include name="ydoc.properties"/>
+            </fileset>
+        </copy>
+        <!-- generate API documentation -->
+        <echo message="Generating API documentation..."/>
+        <delete dir="build/sm.api"/>
+        <mkdir dir="build/sm.api"/>
+        <javadoc Header="${app.package.name}-sm" access="private" author="true" destdir="build/sm.api" doctitle="${app.package.name}-sm" failonerror="true" linksource="yes" overview="etc/api/overview.html" packagenames="*" sourcepath="src/sm.jar" use="true" version="true" windowtitle="${app.package.name}-sm">
+            <arg value="-quiet"/>
+            <arg value="-keywords"/>
+            <arg value="-license"/>
+            <arg value="etc/keys/ydoc.license.txt"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/products/javamail/javadocs/"/>
+            <link href="http://logging.apache.org/log4j/docs/api/"/>
+            <link href="http://teamdev.com/downloads/jniwrapper/javadoc/jniwrapper_v3/"/>
+            <link href="http://teamdev.com/downloads/winpack/javadoc/"/>
+            <link href="http://wrapper.tanukisoftware.org/jdoc/"/>
+            <link href="http://www.ganymed.ethz.ch/ssh2/javadoc/"/>
+            <link href="http://www.opensymphony.com/quartz/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/other/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xerces2/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xni/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xs/"/>
+            <link href="http://xml.apache.org/xalan-j/apidocs/"/>
+            <group title="${app.name.long}" packages="${app.base.package}.*"/>
+            <doclet name="ydoc.doclets.YStandard" pathref="app.cp.ydoc">
+                <param name="-umlautogen" value=""/>
+            </doclet>
+            <classpath refid="app.cp.sm.jar"/>
+        </javadoc>
+        <!-- copy additional documentation -->
+        <echo message="Copying additional documentation..."/>
+        <copy todir="build/sm.api" preservelastmodified="true">
+            <fileset dir=".">
+                <include name="build.instructions.html"/>
+                <include name="readme.html"/>
+                <include name="release.notes.html"/>
+            </fileset>
+            <fileset dir="src/sm.jar">
+                <include name="**/*.html"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+                <include name="**/*.svg"/>
+                <include name="**/*.js"/>
+                <exclude name="**/package.html"/>
+            </fileset>
+        </copy>
+        <!-- copy properties -->
+        <echo message="Copying properties..."/>
+        <copy file="build/properties/build.properties.html" todir="build/sm.api" preservelastmodified="true"/>
+        <!-- check style -->
+        <echo message="Analyzing..."/>
+        <checkstyle config="etc/api/checkstyle.xml" failOnViolation="false">
+            <fileset dir="src/sm.jar">
+                <include name="**/*.java"/>
+            </fileset>
+            <classpath refid="app.cp.sm.jar"/>
+            <formatter type="xml" toFile="build/sm.api/build.checkstyle.xml"/>
+        </checkstyle>
+        <copy file="etc/api/checkstyle.png" todir="build/sm.api" preservelastmodified="true"/>
+        <xslt in="build/sm.api/build.checkstyle.xml" style="etc/api/checkstyle.xsl" out="build/sm.api/build.checkstyle.html"/>
+        <!-- JavaNCSS -->
+        <javancss srcdir="src/sm.jar" includes="**/*.java" generateReport="true" outputfile="build/sm.api/build.javancss.xml" format="xml"/>
+        <xslt in="build/sm.api/build.javancss.xml" style="bin/javancss28.49/xslt/javancss2html.xsl" out="build/sm.api/build.javancss.html"/>
+        <!-- perform package dependency analysis -->
+        <echo message="Performing package dependency analysis..."/>
+        <jdepend outputfile="build/sm.api/build.jdepend.xml" format="xml">
+            <sourcespath>
+                <pathelement location="src/sm.jar"/>
+            </sourcespath>
+            <classespath>
+                <pathelement location="build/sm.jar"/>
+            </classespath>
+            <exclude name="ch.ethz.ssh2"/>
+            <exclude name="com.jniwrapper"/>
+            <exclude name="com.jniwrapper.win32.registry"/>
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <exclude name="org.apache"/>
+            <exclude name="org.quartz"/>
+            <exclude name="org.quartz.impl"/>
+            <exclude name="org.w3c"/>
+            <exclude name="org.xml.sax"/>
+        </jdepend>
+        <xslt in="build/sm.api/build.jdepend.xml" style="bin/${app.ant.name}/etc/jdepend.xsl" out="build/sm.api/build.jdepend.html"/>
+        <!-- publish the api docs -->
+<!--
+        <zip compress="true" destfile="dist/${app.package.name}-sm.api.zip" duplicate="fail" level="9">
+            <fileset dir="build/sm.api">
+                <include name="**"/>
+            </fileset>
+        </zip>
+-->
+        <!-- compile to Windows Help format -->
+        <exec executable="bin/jd2chm.exe" dir="build/sm.api" os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="-p"/>
+            <arg value="${app.name.short}-sm"/>
+            <arg value="-t"/>
+            <arg value="${app.package.name}-sm"/>
+        </exec>
+        <copy file="build/sm.api/${app.name.short}-sm.chm" todir="dist" preservelastmodified="true"/>
+    </target>
+    <target name="setup.api" description="generates documentation for the setup program" depends="setup.jar">
+        <!-- configure yDoc -->
+        <copy todir="bin/${app.ydoc.name}/resources" preservelastmodified="true">
+            <fileset dir="etc/api">
+                <include name="ydoc.properties"/>
+            </fileset>
+        </copy>
+        <!-- generate API documentation -->
+        <echo message="Generating API documentation..."/>
+        <delete dir="build/setup.api"/>
+        <mkdir dir="build/setup.api"/>
+        <javadoc Header="${app.package.name}-setup" access="private" author="true" destdir="build/setup.api" doctitle="${app.package.name}-setup" failonerror="true" linksource="yes" overview="etc/api/overview.html" packagenames="*" sourcepath="src/setup.jar" use="true" version="true" windowtitle="${app.package.name}-setup">
+            <arg value="-quiet"/>
+            <arg value="-keywords"/>
+            <arg value="-license"/>
+            <arg value="etc/keys/ydoc.license.txt"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/products/javamail/javadocs/"/>
+            <link href="http://logging.apache.org/log4j/docs/api/"/>
+            <link href="http://teamdev.com/downloads/jniwrapper/javadoc/jniwrapper_v3/"/>
+            <link href="http://teamdev.com/downloads/winpack/javadoc/"/>
+            <link href="http://wrapper.tanukisoftware.org/jdoc/"/>
+            <link href="http://www.ganymed.ethz.ch/ssh2/javadoc/"/>
+            <link href="http://www.opensymphony.com/quartz/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/other/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xerces2/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xni/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xs/"/>
+            <link href="http://xml.apache.org/xalan-j/apidocs/"/>
+            <group title="${app.name.long}" packages="${app.base.package}.*"/>
+            <doclet name="ydoc.doclets.YStandard" pathref="app.cp.ydoc">
+                <param name="-umlautogen" value=""/>
+            </doclet>
+            <classpath refid="app.cp.setup.jar"/>
+        </javadoc>
+        <!-- copy additional documentation -->
+        <echo message="Copying additional documentation..."/>
+        <copy todir="build/setup.api" preservelastmodified="true">
+            <fileset dir=".">
+                <include name="build.instructions.html"/>
+                <include name="readme.html"/>
+                <include name="release.notes.html"/>
+            </fileset>
+            <fileset dir="src/setup.jar">
+                <include name="**/*.html"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+                <include name="**/*.svg"/>
+                <include name="**/*.js"/>
+                <exclude name="**/package.html"/>
+                <exclude name="res/**"/>
+            </fileset>
+        </copy>
+        <!-- copy properties -->
+        <echo message="Copying properties..."/>
+        <copy file="build/properties/build.properties.html" todir="build/setup.api" preservelastmodified="true"/>
+        <!-- check style -->
+        <echo message="Analyzing..."/>
+        <checkstyle config="etc/api/checkstyle.xml" failOnViolation="false">
+            <fileset dir="src/setup.jar">
+                <include name="**/*.java"/>
+            </fileset>
+            <classpath refid="app.cp.setup.jar"/>
+            <formatter type="xml" toFile="build/setup.api/build.checkstyle.xml"/>
+        </checkstyle>
+        <copy file="etc/api/checkstyle.png" todir="build/setup.api" preservelastmodified="true"/>
+        <xslt in="build/setup.api/build.checkstyle.xml" style="etc/api/checkstyle.xsl" out="build/setup.api/build.checkstyle.html"/>
+        <!-- JavaNCSS -->
+        <javancss srcdir="src/setup.jar" includes="**/*.java" generateReport="true" outputfile="build/setup.api/build.javancss.xml" format="xml"/>
+        <xslt in="build/setup.api/build.javancss.xml" style="bin/javancss28.49/xslt/javancss2html.xsl" out="build/setup.api/build.javancss.html"/>
+        <!-- perform package dependency analysis -->
+        <echo message="Performing package dependency analysis..."/>
+        <jdepend outputfile="build/setup.api/build.jdepend.xml" format="xml">
+            <sourcespath>
+                <pathelement location="src/setup.jar"/>
+            </sourcespath>
+            <classespath>
+                <pathelement location="build/setup.jar"/>
+            </classespath>
+            <exclude name="ch.ethz.ssh2"/>
+            <exclude name="com.jniwrapper"/>
+            <exclude name="com.jniwrapper.win32.registry"/>
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <exclude name="org.apache"/>
+            <exclude name="org.quartz"/>
+            <exclude name="org.quartz.impl"/>
+            <exclude name="org.w3c"/>
+            <exclude name="org.xml.sax"/>
+        </jdepend>
+        <xslt in="build/setup.api/build.jdepend.xml" style="bin/${app.ant.name}/etc/jdepend.xsl" out="build/setup.api/build.jdepend.html"/>
+        <!-- publish the api docs -->
+<!--
+        <zip compress="true" destfile="dist/${app.package.name}-setup.api.zip" duplicate="fail" level="9">
+            <fileset dir="build/setup.api">
+                <include name="**"/>
+            </fileset>
+        </zip>
+-->
+        <!-- compile to Windows Help format -->
+        <exec executable="bin/jd2chm.exe" dir="build/setup.api" os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="-p"/>
+            <arg value="${app.name.short}-setup"/>
+            <arg value="-t"/>
+            <arg value="${app.package.name}-setup"/>
+        </exec>
+        <copy file="build/setup.api/${app.name.short}-setup.chm" todir="dist" preservelastmodified="true"/>
+    </target>
+    <target name="upgrade.api" description="generates documentation for the upgrade program" depends="upgrade.jar">
+        <!-- configure yDoc -->
+        <copy todir="bin/${app.ydoc.name}/resources" preservelastmodified="true">
+            <fileset dir="etc/api">
+                <include name="ydoc.properties"/>
+            </fileset>
+        </copy>
+        <!-- generate API documentation -->
+        <echo message="Generating API documentation..."/>
+        <delete dir="build/upgrade.api"/>
+        <mkdir dir="build/upgrade.api"/>
+        <javadoc Header="${app.package.name}-upgrade" access="private" author="true" destdir="build/upgrade.api" doctitle="${app.package.name}-upgrade" failonerror="true" linksource="yes" overview="etc/api/overview.html" packagenames="*" sourcepath="src/upgrade.jar" use="true" version="true" windowtitle="${app.package.name}-upgrade">
+            <arg value="-quiet"/>
+            <arg value="-keywords"/>
+            <arg value="-license"/>
+            <arg value="etc/keys/ydoc.license.txt"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/products/javamail/javadocs/"/>
+            <link href="http://logging.apache.org/log4j/docs/api/"/>
+            <link href="http://teamdev.com/downloads/jniwrapper/javadoc/jniwrapper_v3/"/>
+            <link href="http://teamdev.com/downloads/winpack/javadoc/"/>
+            <link href="http://wrapper.tanukisoftware.org/jdoc/"/>
+            <link href="http://www.ganymed.ethz.ch/ssh2/javadoc/"/>
+            <link href="http://www.opensymphony.com/quartz/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/api/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/other/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xerces2/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xni/"/>
+            <link href="http://xerces.apache.org/xerces2-j/javadocs/xs/"/>
+            <link href="http://xml.apache.org/xalan-j/apidocs/"/>
+            <group title="${app.name.long}" packages="${app.base.package}.*"/>
+            <doclet name="ydoc.doclets.YStandard" pathref="app.cp.ydoc">
+                <param name="-umlautogen" value=""/>
+            </doclet>
+            <classpath refid="app.cp.upgrade.jar"/>
+        </javadoc>
+        <!-- copy additional documentation -->
+        <echo message="Copying additional documentation..."/>
+        <copy todir="build/upgrade.api" preservelastmodified="true">
+            <fileset dir=".">
+                <include name="build.instructions.html"/>
+                <include name="readme.html"/>
+                <include name="release.notes.html"/>
+            </fileset>
+            <fileset dir="src/upgrade.jar">
+                <include name="**/*.html"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+                <include name="**/*.svg"/>
+                <include name="**/*.js"/>
+                <exclude name="**/package.html"/>
+                <exclude name="res/**"/>
+            </fileset>
+        </copy>
+        <!-- copy properties -->
+        <echo message="Copying properties..."/>
+        <copy file="build/properties/build.properties.html" todir="build/upgrade.api" preservelastmodified="true"/>
+        <!-- check style -->
+        <echo message="Analyzing..."/>
+        <checkstyle config="etc/api/checkstyle.xml" failOnViolation="false">
+            <fileset dir="src/upgrade.jar">
+                <include name="**/*.java"/>
+            </fileset>
+            <classpath refid="app.cp.upgrade.jar"/>
+            <formatter type="xml" toFile="build/upgrade.api/build.checkstyle.xml"/>
+        </checkstyle>
+        <copy file="etc/api/checkstyle.png" todir="build/upgrade.api" preservelastmodified="true"/>
+        <xslt in="build/upgrade.api/build.checkstyle.xml" style="etc/api/checkstyle.xsl" out="build/upgrade.api/build.checkstyle.html"/>
+        <!-- JavaNCSS -->
+        <javancss srcdir="src/upgrade.jar" includes="**/*.java" generateReport="true" outputfile="build/upgrade.api/build.javancss.xml" format="xml"/>
+        <xslt in="build/upgrade.api/build.javancss.xml" style="bin/javancss28.49/xslt/javancss2html.xsl" out="build/upgrade.api/build.javancss.html"/>
+        <!-- perform package dependency analysis -->
+        <echo message="Performing package dependency analysis..."/>
+        <jdepend outputfile="build/upgrade.api/build.jdepend.xml" format="xml">
+            <sourcespath>
+                <pathelement location="src/upgrade.jar"/>
+            </sourcespath>
+            <classespath>
+                <pathelement location="build/upgrade.jar"/>
+            </classespath>
+            <exclude name="ch.ethz.ssh2"/>
+            <exclude name="com.jniwrapper"/>
+            <exclude name="com.jniwrapper.win32.registry"/>
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <exclude name="org.apache"/>
+            <exclude name="org.quartz"/>
+            <exclude name="org.quartz.impl"/>
+            <exclude name="org.w3c"/>
+            <exclude name="org.xml.sax"/>
+        </jdepend>
+        <xslt in="build/upgrade.api/build.jdepend.xml" style="bin/${app.ant.name}/etc/jdepend.xsl" out="build/upgrade.api/build.jdepend.html"/>
+        <!-- publish the api docs -->
+<!--
+        <zip compress="true" destfile="dist/${app.package.name}-upgrade.api.zip" duplicate="fail" level="9">
+            <fileset dir="build/upgrade.api">
+                <include name="**"/>
+            </fileset>
+        </zip>
+-->
+        <!-- compile to Windows Help format -->
+        <exec executable="bin/jd2chm.exe" dir="build/upgrade.api" os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="-p"/>
+            <arg value="${app.name.short}-upgrade"/>
+            <arg value="-t"/>
+            <arg value="${app.package.name}-upgrade"/>
+        </exec>
+        <copy file="build/upgrade.api/${app.name.short}-upgrade.chm" todir="dist" preservelastmodified="true"/>
+    </target>
+    <target name="jdk" description="packages the JDK" depends="lib">
+        <!-- JDK -->
+        <echo message="Copying JDK..."/>
+        <mkdir dir="dist"/>
+        <copy todir="dist" preservelastmodified="true">
+            <fileset dir="bin">
+                <include name="${app.jdk.name}/**"/>
+                <exclude name="${app.jdk.name}/src.zip"/>
+                <exclude name="${app.jdk.name}/demo/**"/>
+                <exclude name="${app.jdk.name}/include/**"/>
+                <exclude name="${app.jdk.name}/sample/**"/>
+                <exclude name="${app.jdk.name}/jre/lib/security/java.policy"/>
+                <exclude name="${app.jdk.name}/jre/lib/security/javaws.policy"/>
+                <exclude name="${app.jdk.name}/jre/lib/security/local_policy.jar"/>
+                <exclude name="${app.jdk.name}/jre/lib/security/US_export_policy.jar"/>
+            </fileset>
+        </copy>
+        <!-- ext -->
+        <echo message="Copying ext..."/>
+        <copy todir="dist/${app.jdk.name}/jre/lib/ext" preservelastmodified="true">
+            <fileset dir="tmp/ext">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+        <!-- jce -->
+        <echo message="Copying jce..."/>
+        <copy todir="dist/${app.jdk.name}/jre/lib/security" preservelastmodified="true">
+            <fileset dir="tmp/jce">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+        <!-- policies -->
+        <echo message="Copying policies..."/>
+        <copy file="etc/jdk/java.policy" tofile="dist/${app.jdk.name}/jre/lib/security/java.policy" preservelastmodified="true"/>
+        <copy file="etc/jdk/java.policy" tofile="dist/${app.jdk.name}/jre/lib/security/javaws.policy" preservelastmodified="true"/>
+        <!-- properties -->
+        <echo message="Copying properties..."/>
+        <copy file="etc/jdk/jaxp.properties" tofile="dist/${app.jdk.name}/jre/lib/jaxp.properties" preservelastmodified="true"/>
+    </target>
+    <target name="config" description="copies config files" depends="lib,jdk">
+        <!-- give standard launchers a new name -->
+        <copy file="dist/${app.jdk.name}/bin/java.exe" tofile="dist/${app.jdk.name}/bin/${app.name.short}.server.exe" preservelastmodified="true"/>
+        <!-- copy wrapper files for service -->
+        <copy file="tmp/lib/wrapper-windows-x86-32-3.2.3/bin/wrapper.exe" tofile="dist/${app.name.short}.service.exe" preservelastmodified="true"/>
+        <copy file="etc/service.ini" tofile="dist/${app.name.short}.service.ini" preservelastmodified="true"/>
+        <!-- copy configuration files -->
+        <copy file="readme.html" todir="dist" preservelastmodified="true"/>
+        <copy file="release.notes.html" tofile="dist/release.notes.html" preservelastmodified="true"/>
+        <copy file="etc/sysinfo.dtd" tofile="dist/sysinfo.dtd" preservelastmodified="true"/>
+    </target>
+    <target name="sm.exe" description="builds install.exe, start.exe, stop.exe, and remove.exe" depends="init">
+        <exe4j projectfile="src/sm.exe/sm.install.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+        <exe4j projectfile="src/sm.exe/sm.start.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+        <exe4j projectfile="src/sm.exe/sm.stop.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+        <exe4j projectfile="src/sm.exe/sm.remove.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+    </target>
+    <target name="app.exe" description="builds app.exe" depends="init">
+        <mkdir dir="dist"/>
+        <exe4j projectfile="src/app.exe/app.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+    </target>
+    <target name="setup.exe" description="builds setup.exe" depends="init">
+        <mkdir dir="dist"/>
+        <exe4j projectfile="src/setup.exe/setup.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+    </target>
+    <target name="upgrade.exe" description="builds upgrade.exe" depends="init">
+        <mkdir dir="dist"/>
+        <exe4j projectfile="src/upgrade.exe/upgrade.exe4j" release="${app.version.info.FileVersion}" verbose="true"/>
+    </target>
+    <target name="support.exe" description="copies support.exe" depends="init">
+        <mkdir dir="dist"/>
+        <copy todir="dist" preservelastmodified="true">
+            <fileset dir="src/support.exe">
+                <include name="*.*"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="setup.msi" description="builds setup.msi" depends="init">
+        <mkdir dir="pub"/>
+        <exec executable="${app.AdvancedInstaller.exe}" dir="${user.dir}" os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="/edit"/>
+            <arg value="${user.dir}\\setup.aip"/>
+            <arg value="/SetVersion"/>
+            <arg value="${app.version.info.FileVersion}"/>
+        </exec>
+        <exec executable="${app.AdvancedInstaller.exe}" dir="." os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="/build"/>
+            <arg value="${user.dir}\\setup.aip"/>
+        </exec>
+<!--
+        <exec executable="${app.AdvancedInstaller.exe}" dir="." os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="/edit"/>
+            <arg value="${user.dir}\\setup.aip"/>
+            <arg value="/AddFile"/>
+            <arg value="APPDIR"/>
+            <arg value="${user.dir}\\release.notes.html"/>
+        </exec>
+        <exec executable="${app.AdvancedInstaller.exe}" dir="." os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="/build"/>
+            <arg value="${user.dir}/src/setup.exe/setup.aip"/>
+        </exec>
+        <move file="pub/setup.exe" tofile="pub/${app.package.name}.setup.exe"/>
+-->
+    </target>
+    <target name="upgrade.msi" description="builds upgrade.msi" depends="init">
+        <mkdir dir="pub"/>
+        <exec executable="${app.AdvancedInstaller.exe}" dir="${user.dir}" os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="/edit"/>
+            <arg value="${user.dir}\\upgrade.aip"/>
+            <arg value="/SetVersion"/>
+            <arg value="${app.version.info.FileVersion}"/>
+        </exec>
+        <exec executable="${app.AdvancedInstaller.exe}" dir="." os="Windows 2000,Windows 2003,Windows XP,Windows 7" failonerror="true">
+            <arg value="/build"/>
+            <arg value="${user.dir}\\upgrade.aip"/>
+        </exec>
+    </target>
+    <target name="compile" description="compiles Java classes" depends="init,lic,lib,server.jar,sm.jar,setup.jar,upgrade.jar">
+    </target>
+    <target name="test" description="builds and publishes a distribution" depends="compile,jdk,config,sm.exe,setup.exe,upgrade.exe">
+    </target>
+    <target name="dist" description="builds and publishes a distribution" depends="compile,server.api,sm.api,setup.api,upgrade.api,jdk,config,sm.exe,app.exe,setup.exe,upgrade.exe,support.exe,setup.msi,upgrade.msi">
+    </target>
+    <target name="bak" description="makes a backup of the project" depends="init">
+        <!-- backup the project -->
+        <echo message="Creating backup..."/>
+<!--
+        <zip compress="true" destfile="../${app.package.name}.src.zip" duplicate="fail" level="9">
+            <fileset dir="..">
+                <include name="cut/**"/>
+                <exclude name="cut/build/**"/>
+                <exclude name="cut/dist/**"/>
+                <exclude name="cut/etc/keys/**"/>
+                <exclude name="cut/pub/**"/>
+                <exclude name="cut/tmp/**"/>
+                <exclude name="cut/trash/**"/>
+            </fileset>
+        </zip>
+-->
+        <zip compress="true" destfile="../${app.package.name}.zip" duplicate="fail" level="9" defaultexcludes="false">
+            <fileset dir="..">
+                <include name="cut/**"/>
+            </fileset>
+        </zip>
+    </target>
+    <target name="release.notes" description="" depends="">
+        <xslt in="doc/release.notes/release.notes.html" style="doc/release.notes/release.notes.xsl" out="doc/release.notes/release.notes2.html"/>
+    </target>
+    <target name="all" description="creates a full distribution and makes a backup" depends="dist,bak">
+        <echo message="Done."/>
+    </target>
+</project>

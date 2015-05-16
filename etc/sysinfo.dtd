@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT sysinfo (general,drives,environment,odbc,registry,system)>
+
+<!ELEMENT general (date,time,memory,processors,version)>
+<!ELEMENT date #PCDATA>
+<!ELEMENT time #PCDATA>
+<!ELEMENT memory EMPTY>
+<!ATTLIST memory
+    free CDATA #REQUIRED
+    max CDATA #REQUIRED
+    total CDATA #REQUIRED
+>
+<!ELEMENT processors #PCDATA>
+<!ELEMENT version #PCDATA>
+
+<!ELEMENT drives (drive)*>
+<!ELEMENT drive EMPTY>
+<!ATTLIST drive
+    free CDATA #REQUIRED
+    name CDATA #REQUIRED
+    total CDATA #REQUIRED
+    usable CDATA #REQUIRED
+>
+
+<!ELEMENT environment (variable)*>
+<!ELEMENT variable #PCDATA>
+<!ATTLIST variable
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT odbc (dsn)*>
+<!ELEMENT dsn EMPTY>
+<!ATTLIST dsn
+    name CDATA #REQUIRED
+    type CDATA #REQUIRED
+>
+
+<!ELEMENT registry (entry)*>
+<!ELEMENT entry #PCDATA>
+<!ATTLIST entry
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT system (property)*>
+<!ELEMENT property #PCDATA>
+<!ATTLIST property
+    name CDATA #REQUIRED
+>

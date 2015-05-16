@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en" xml:lang="en">
+    <head>
+        <title>MainWindow</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+        <meta name="author" content="Ed Jenkins"/>
+    </head>
+    <body>
+        <table border="1" cellpadding="3" cellspacing="0" width="100%">
+            <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+                <td>
+                    <font size="+2">
+                        <b>Structure Of MainWindow</b>
+                    </font>
+                </td>
+            </tr>
+            <tr bgcolor="white" class="TableRowColor">
+                <td>
+                    <table border="1">
+                        <tr>
+                            <td>BannerPanel</td>
+                            <td>
+                                <table border="1">
+                                    <tr>
+                                        <td>TitlePanel</td>
+                                    </tr>
+                                    <tr>
+                                        <td>WizardPanel</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NavPanel</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <p />
+        <table border="1" cellpadding="3" cellspacing="0" width="100%">
+            <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+                <td>
+                    <font size="+2">
+                        <b>Workflow Within WizardPanel</b>
+                    </font>
+                </td>
+            </tr>
+            <tr bgcolor="white" class="TableRowColor">
+                <td>
+                    <ol>
+                        <!-- Say "Hi". -->
+                        <li>EnterWelcomePanel</li>
+                        <!-- Tell the user we're ready to start. -->
+                        <li>EnterReadyPanel</li>
+                        <!-- Install stuff. -->
+                        <li>InstallPanel</li>
+                        <!-- Tell the user we're done. -->
+                        <li>InstallFinishedPanel</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
